@@ -1,0 +1,308 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyMGltsRFXG2MLQq0CCvHfR1",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/rasyidii/Soal-Sistem-Automasi-/blob/main/Code%20Phyton\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "\n",
+        "*   **Nama: Muhammad Radhi Rasyidi Rafli**\n",
+        "*   **NIM: 235150307111041**\n",
+        "\n",
+        "\n",
+        "\n",
+        "---\n",
+        "\n",
+        "\n",
+        "\n",
+        "Tugas:\n",
+        "\n",
+        "1. Model Matematika Motor DC (Persamaan Listrik dan Mekanik)\n",
+        "\n",
+        "2. Transformasi Laplace pada Motor DC\n",
+        "\n",
+        "3. Fungsi Alih Hubungan antara  kecepatan sudut ($\\omega$) terhadap tegangan (V)\n",
+        "\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "SXgwJsfODo-l"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Pendefinisian Setiap Symbol dan Variable yang akan digunakan pada perhitungan.**"
+      ],
+      "metadata": {
+        "id": "nUDwtOsvDtCX"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import sympy as sp\n",
+        "\n",
+        "# Definisikan Variabel Simbolik\n",
+        "t = sp.symbols('t')  # Variabel waktu\n",
+        "s = sp.symbols('s')  # Variabel Laplace\n",
+        "\n",
+        "# Fungsi dalam domain waktu\n",
+        "V_t = sp.Function('V')(t)  # Tegangan Input\n",
+        "i_t = sp.Function('i')(t)  # Arus Armatur\n",
+        "omega_t = sp.Function('omega')(t)  # Kecepatan Sudut Motor\n",
+        "\n",
+        "# Fungsi dalam domain Laplace\n",
+        "V_s = sp.Function('V')(s)  # Tegangan dalam Laplace\n",
+        "i_s = sp.Function('i')(s)  # Arus dalam Laplace\n",
+        "omega_s = sp.Function('omega')(s)  # Kecepatan Sudut dalam Laplace\n",
+        "\n",
+        "# Parameter Motor DC\n",
+        "R, L, J, B, Ke, Kt = sp.symbols('R L J B Ke Kt')\n",
+        "\n",
+        "print(\" Simbol berhasil didefinisikan!\")\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ksUW2RXQFFMX",
+        "outputId": "ecfc6c05-81c7-44ed-c07a-294c8ae54cf4"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            " Simbol berhasil didefinisikan!\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Menulis Persamaan Dasar Pada Motor DC**"
+      ],
+      "metadata": {
+        "id": "5Kl9SdfcFLMD"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Persamaan GGL Balik dalam Domain Waktu\n",
+        "Eb_t = Ke * omega_t  # GGL Balik\n",
+        "print(\"\\n🔹 Persamaan GGL Balik pada Domain Waktu:\")\n",
+        "sp.pprint(Eb_t)\n",
+        "\n",
+        "# Persamaan Listrik dalam Domain Waktu\n",
+        "eq_listrik = sp.Eq(V_t, Ke * omega_t + L * sp.diff(i_t, t) + R * i_t)\n",
+        "print(\"\\n🔹 Persamaan Listrik pada Domain Waktu:\")\n",
+        "sp.pprint(eq_listrik)\n",
+        "\n",
+        "# Persamaan Mekanik dalam Domain Waktu\n",
+        "eq_mekanik = sp.Eq(Kt * i_t, B * omega_t + J * sp.diff(omega_t, t))\n",
+        "print(\"\\n🔹 Persamaan Mekanik pada Domain Waktu:\")\n",
+        "sp.pprint(eq_mekanik)\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "mGSBguDCFVlJ",
+        "outputId": "deaa5d1a-b548-41f2-a2c0-d7c15f53ba96"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "🔹 Persamaan GGL Balik pada Domain Waktu:\n",
+            "Ke⋅ω(t)\n",
+            "\n",
+            "🔹 Persamaan Listrik pada Domain Waktu:\n",
+            "                   d                \n",
+            "V(t) = Ke⋅ω(t) + L⋅──(i(t)) + R⋅i(t)\n",
+            "                   dt               \n",
+            "\n",
+            "🔹 Persamaan Mekanik pada Domain Waktu:\n",
+            "                     d       \n",
+            "Kt⋅i(t) = B⋅ω(t) + J⋅──(ω(t))\n",
+            "                     dt      \n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Pengubahan Domain Waktu Ke Domain Laplace**"
+      ],
+      "metadata": {
+        "id": "KTE7zeaXFc8_"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Persamaan GGL Balik dalam Domain Laplace\n",
+        "Eb_s = Ke * omega_s\n",
+        "print(\"\\n🔹 Persamaan GGL Balik pada Domain Laplace:\")\n",
+        "sp.pprint(Eb_s)\n",
+        "\n",
+        "# Persamaan Listrik dalam Domain Laplace\n",
+        "eq_listrik_s = sp.Eq(V_s, Ke * omega_s + R * i_s)\n",
+        "print(\"\\n🔹 Persamaan Listrik pada Domain Laplace:\")\n",
+        "sp.pprint(eq_listrik_s)\n",
+        "\n",
+        "# Persamaan Mekanik dalam Domain Laplace\n",
+        "eq_mekanik_s = sp.Eq(Kt * i_s, B * omega_s + J * s * omega_s)\n",
+        "print(\"\\n🔹 Persamaan Mekanik pada Domain Laplace:\")\n",
+        "sp.pprint(eq_mekanik_s)\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "vh2xJYQpFfwg",
+        "outputId": "2347fcfc-f6b2-43bf-dad2-c076e9950173"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "🔹 Persamaan GGL Balik pada Domain Laplace:\n",
+            "Ke⋅ω(s)\n",
+            "\n",
+            "🔹 Persamaan Listrik pada Domain Laplace:\n",
+            "V(s) = Ke⋅ω(s) + R⋅i(s)\n",
+            "\n",
+            "🔹 Persamaan Mekanik pada Domain Laplace:\n",
+            "Kt⋅i(s) = B⋅ω(s) + J⋅s⋅ω(s)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Menentukan i(s) dan menggantinya ke dalam persamaan listrik**"
+      ],
+      "metadata": {
+        "id": "7vjSFWiJFlcv"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Menyelesaikan i(s) dari Persamaan Mekanik\n",
+        "i_s_ = sp.solve(eq_mekanik_s, i_s)[0]\n",
+        "print(\"\\n🔹 Nilai i(s) dari Persamaan Mekanik:\")\n",
+        "sp.pprint(sp.Eq(i_s, i_s_))\n",
+        "\n",
+        "# Substitusi i(s) ke dalam Persamaan Listrik\n",
+        "eq_listrik_subs = eq_listrik_s.subs(i_s, i_s_)\n",
+        "print(\"\\n🔹 Persamaan Listrik Setelah Substitusi i(s):\")\n",
+        "sp.pprint(eq_listrik_subs)\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "sJBSSQcEF4Sw",
+        "outputId": "b3566ed1-cb95-460d-e9e5-19a38bf1a2e0"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "🔹 Nilai i(s) dari Persamaan Mekanik:\n",
+            "       (B + J⋅s)⋅ω(s)\n",
+            "i(s) = ──────────────\n",
+            "             Kt      \n",
+            "\n",
+            "🔹 Persamaan Listrik Setelah Substitusi i(s):\n",
+            "                 R⋅(B + J⋅s)⋅ω(s)\n",
+            "V(s) = Ke⋅ω(s) + ────────────────\n",
+            "                        Kt       \n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Menentukan Fungsi Alih G(s)= Ω(s)/V(s)**\n"
+      ],
+      "metadata": {
+        "id": "neHONicHGCBp"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Pecahkan untuk G(s) = Omega(s) / V(s)\n",
+        "V_s_rhs = eq_listrik_subs.rhs  # Ambil bagian kanan dari V(s)\n",
+        "\n",
+        "G_s = sp.simplify(omega_s / V_s_rhs)  # Fungsi Alih\n",
+        "print(\"\\n🔹 Fungsi Alih G(s) = Omega(s) / V(s):\")\n",
+        "sp.pprint(sp.Eq(sp.Function('H')(s), G_s))\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "w45xjpaeGIXv",
+        "outputId": "6da8118e-be9e-46bc-a2e2-fe7a40c72b59"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "🔹 Fungsi Alih G(s) = Omega(s) / V(s):\n",
+            "               Kt         \n",
+            "H(s) = ───────────────────\n",
+            "       Ke⋅Kt + R⋅(B + J⋅s)\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
